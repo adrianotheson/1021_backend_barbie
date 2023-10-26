@@ -1,25 +1,38 @@
-import express from 'express';
+import express, {Request} from 'express';
 
 // Cria uma instância do aplicativo Express
 const app = express();
+app.use(express.json())
+
+type Filme = {
+    id: number,
+    titulo: string,
+    descricao: string,
+    foto: string,
+}
+const filmes_repositorio:Filme[] = []
+
 
 // Define uma rota padrão
-app.get('/', (req, res) => {
-    const filme = {
-        titulo: 'Vingadores',
-        descricao: 'Filme dos Vingadores',
-        foto: 'https://live.staticflickr.com/7270/6976087418_59719341f5_b.jpg',
-    }
-    res.send([filme])
+app.get('/filmes/:id', (req, res) => {
+    const id = parseInt(req.params.id)
+    const filme = filmes_repositorio.find(filme => filme.id === id)
+    if (!filme) res.status(404).send()
+    res.send(filme)        
 });
-app.post('/filmes', (req, res) => {
-    const filme = {
-        titulo: 'Vingadores',
-        descricao: 'Filme dos Vingadores',
-        foto: 'https://live.staticflickr.com/7270/6976087418_59719341f5_b.jpg',
+
+app.post('/filmes', (req:Request, res) => {
+    const {id, titulo, descricao, foto} = req.body
+    const filme:Filme = {
+        id,
+        titulo,
+        descricao,
+        foto,
     }
+    filmes_repositorio.push(filme)
     res.status(201).send(filme)
 });
+
 
 // Inicia o servidor
 app.listen(3000, () => {
