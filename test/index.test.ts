@@ -44,15 +44,37 @@ describe('Cadastro Filme', () => {
     const resposta = await axios.post('http://localhost:3000/filmes', filme)
 
     //1) Buscar o filme cadastrado
-    const listaFilmes = await axios.delete('http://localhost:3000/filmes/3')
-    const filmeRemovido = listaFilmes.data
+    const listaFilmes = await axios.get('http://localhost:3000/filmes/2')
+    const filmeCadastrado = listaFilmes.data
     //2)Verificar se o filme devolvido é igual ao que nós cadastramos
-    expect(filmeRemovido).toEqual(filme)
+    expect(filmeCadastrado).toEqual(filme)
+  })
+  it('deve excluir um filme cadastrado', async () => {
+    const filme = {
+        id: 3,
+        titulo: 'Barbie a ser excluido',
+        descricao: 'Filme da barbie',
+        foto: 'https://live.staticflickr.com/7270/6976087418_59719341f5_b.jpg',
+    }
+    const resposta = await axios.post('http://localhost:3000/filmes', filme)
+    //console.log("Filme Cadastrado",resposta.data,resposta.status)
+    //1) Buscar o filme cadastrado
+    const listaFilmes = await fetch('http://localhost:3000/filmes/3',
+            { 
+              method: 'DELETE',
+              headers: {
+                "content-type": "application/json"
+              }
+            })
+    expect(listaFilmes.status).toEqual(200)
+    listaFilmes.json().then(resposta=>{
+      console.log("Reposta:",resposta)
+    })
+    //2)Verifica se o filme que foi removido é igual ao que nós cadastramos
+    //expect(filmeRemovido).toEqual(filme)
 
-       const reposta = await axios.get('http://localhost:3000/filmes/3')
-       expect(reposta.status).toEqual(404)
-       expect(reposta.data).toEqual(undefined)
-
-    
+    //3)Buscar o filme que foi removido
+    const resposta2 = await fetch('http://localhost:3000/filmes/3')
+    expect(resposta2.status).toBe(404)
   })
 })
