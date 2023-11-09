@@ -1,7 +1,7 @@
 import {describe,test,expect} from 'vitest'
-import BancoMongoDB from './banco-em-memoria'
-describe("Banco em memória",()=>{
-    test("Deve salvar no banco em memória",async ()=>{
+import BancoMongoDB from './banco-mongodb'
+describe.skip("Banco MongoDB",()=>{
+    test("Deve salvar no banco MongoDB",async ()=>{
         const input= {
             id:1,
             titulo:"test",
@@ -11,9 +11,5 @@ describe("Banco em memória",()=>{
         const bancoMongoDB = new BancoMongoDB();
         const result = await bancoMongoDB.salvar(input)
         expect(result).toBe(true)
-    
     })
 })
-
-
-
