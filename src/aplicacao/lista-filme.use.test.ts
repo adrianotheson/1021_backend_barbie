@@ -1,6 +1,6 @@
 import {expect, describe, test} from 'vitest'
 import BancoEmMemoria from '../infra/banco/banco-em-memoria'
-import ListarFilme from './listar-filme.use-case'
+import ListarFilme from './lista-filme.use-case'
 
 describe("Listar filme",()=>{
     test("Deve listar filme",async ()=>{
