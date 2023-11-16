@@ -1,27 +1,18 @@
 import express, {Request} from 'express';
-
-// Cria uma instância do aplicativo Express
+import BancoMongoDB from './infra/banco/banco-mongodb';
+import ListarFilme from './aplicacao/lista-filme.use-case'
+const bancoMongoDB = new BancoMongoDB()
 const app = express();
 app.use(express.json())
 
-type Filme = {
-    id: number,
-    titulo: string,
-    descricao: string,
-    foto: string,
-}
-let filmes_repositorio:Filme[] = []
 
-
-// Define uma rota padrão
-app.get('/filmes/:id', (req, res) => {
-    const id = parseInt(req.params.id)
-    const filme = filmes_repositorio.find(filme => filme.id === id)
-    if (!filme) res.status(404).send()
-    res.send(filme)        
+app.get('/filmes', async (req, res) => {
+    const listarFilme = new ListarFilme(bancoMongoDB)
+    const filmes = await listarFilme.execute()
+    res.status(200).send(filmes)        
 });
 
-app.post('/filmes', (req:Request, res) => {
+app.post('/filmes', async (req:Request, res) => {
     const {id, titulo, descricao, foto} = req.body
     const filme:Filme = {
         id,
@@ -30,6 +21,7 @@ app.post('/filmes', (req:Request, res) => {
         foto,
     }
     filmes_repositorio.push(filme)
+    await bancoMongoDB.salvar(filme)
     res.status(201).send(filme)
 });
 
@@ -47,3 +39,12 @@ app.delete('/filmes/:id', (req, res) => {
 app.listen(3000, () => {
     console.log('Servidor iniciado na porta 3000');
 });
+
+
+type Filme = {
+    id: number,
+    titulo: string,
+    descricao: string,
+    foto: string,
+}
+let filmes_repositorio:Filme[] = []
